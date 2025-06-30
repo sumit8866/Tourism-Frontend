@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import "aos";
 import {
@@ -26,15 +26,18 @@ import { Field, Form, Formik } from "formik";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+
 const TourPage = () => {
-
-
   var today = new Date();
-var dd = String(today.getDate()).padStart(2, '0');
-var mm = String(today.getMonth() + 1).padStart(2, '0'); 
-var yyyy = today.getFullYear();
+  var dd = String(today.getDate()).padStart(2, "0");
+  var mm = String(today.getMonth() + 1).padStart(2, "0");
+  var yyyy = String(today.getFullYear());
 
-today = `${dd}/${mm}/${yyyy}`;
+  var hours = String(today.getHours());
+  var min = String(today.getMinutes());
+  var seconds = String(today.getSeconds());
+  today = `${dd}/${mm}/${yyyy} || ${hours}:${min}:${seconds}`;
 
   const [init, setinit] = useState({
     fullName: "",
@@ -46,10 +49,10 @@ today = `${dd}/${mm}/${yyyy}`;
   });
   const { id } = useParams();
   const [tour, setTour] = useState(null);
-  const [review  ,setreview ] =useState([]);
+  const [review, setreview] = useState([]);
   const tourkey = "Ofokc8bYPo2MB7Ll";
-  const keyrewview ='hwOMaWc5inHk1x9M'
-  
+  const keyrewview = "hwOMaWc5inHk1x9M";
+
   useEffect(() => {
     axios
       .get("https://generateapi.onrender.com/api/detailstour", {
@@ -58,41 +61,64 @@ today = `${dd}/${mm}/${yyyy}`;
       .then((res) => {
         const found = res.data.Data.find((t) => t._id === id);
         setTour(found);
-      }).catch((error)=>{
-        console.log(error);
-        
       })
+      .catch((error) => {
+        console.log(error);
+      });
   }, [id]);
 
-  const handleSubmit  = (values , {resetform}) => {
-    
-    axios.post('https://generateapi.onrender.com/api/review',values,{
-      headers:{
-        Authorization:keyrewview
-      }
-    }).then((res)=>{
-      console.log(res.data.Data);
-      showdata()
-    }).catch((error)=>{
-      console.log(error);  
-    })
+  const handleSubmit = (values, { resetform }) => {
+    axios
+      .post("https://generateapi.onrender.com/api/review", values, {
+        headers: {
+          Authorization: keyrewview,
+        },
+      })
+      .then((res) => {
+        console.log(res.data.Data);
+        showdata();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  const showdata = ()=>{
-    axios.get('https://generateapi.onrender.com/api/review',{
-      headers:{
-        Authorization:keyrewview
-      }
-    }).then((res)=>{
-      console.log(res.data.Data);
-      setreview(res.data.Data)
-    }).catch((error)=>{
-      console.log(error);  
-    })
-  }
-  useEffect(()=>{
-    showdata()
-  },[])
+  const deletedata = (id) => {
+    console.log("hello");
+
+    axios
+      .delete(`https://generateapi.onrender.com/api/review/${id}`, {
+        headers: {
+          Authorization: keyrewview,
+        },
+      })
+      .then((res) => {
+        console.log("ok");
+        showdata();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const showdata = () => {
+    axios
+      .get("https://generateapi.onrender.com/api/review", {
+        headers: {
+          Authorization: keyrewview,
+        },
+      })
+      .then((res) => {
+        console.log(res.data.Data);
+        setreview(res.data.Data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    showdata();
+  }, []);
 
   if (!tour)
     return <CircularProgress sx={{ mt: 10, mx: "auto", display: "block" }} />;
@@ -150,8 +176,6 @@ today = `${dd}/${mm}/${yyyy}`;
     prevArrow: <CustomPrevArrow />,
   };
 
-
-  
   return (
     <>
       <Box className="slider-container" style={{ position: "relative" }}>
@@ -440,7 +464,7 @@ today = `${dd}/${mm}/${yyyy}`;
           <Formik
             enableReinitialize
             initialValues={init}
-            onSubmit={handleSubmit }
+            onSubmit={handleSubmit}
           >
             <Form>
               <Typography
@@ -487,31 +511,30 @@ today = `${dd}/${mm}/${yyyy}`;
                 sx={{ mb: 2, mt: "5px" }}
               ></Field>
 
-             
-              
-                  <Typography
-                    color="orangered"
-                    variant="div"
-                    fontSize={"14px"}
-                    px={"15px"}
-                    fontWeight={700}
-                    border={"1px solid orangered"}
-                    textAlign={"start"}
-                  >
-                    {" "}
-                    Number of Days
-                  </Typography>
+              <Typography
+                color="orangered"
+                variant="div"
+                fontSize={"14px"}
+                px={"15px"} 
+                fontWeight={700}
+                border={"1px solid orangered"}
+                textAlign={"start"}
+                mb={1}
+              >
+                {" "}
+                Rating 
+              </Typography>
 
-                  <Field
-                    as={TextField}
-                    name="Tourdays"
-                    type="number"
-                    fullWidth
-                    size="small"
-                    sx={{ mb: 2, mt: "5px" }}
-                  ></Field>
-                
-              
+              <Field
+                as={TextField}
+                name="Tourdays"
+                label='Rate in 1 to 5'
+                type="number"
+                fullWidth
+                size="small"
+                sx={{ mb: 2, mt: "5px" }}
+              ></Field>
+
               <Typography
                 color="orangered"
                 variant="div"
@@ -576,65 +599,99 @@ today = `${dd}/${mm}/${yyyy}`;
             </Form>
           </Formik>
 
-        <Box
-        
-          backgroundColor="#fef9f4"
-          mx={{ xs: "0px", md: "10px" }}
-          my={{ xs: "20px", md: "0px" }}
-          sx={{ height: "fit-content" }}
-          p={1}
-        >
-          {
-            review.map((review,index)=>(
+          <Box
+            backgroundColor="#fef9f4"
+            mx={{ xs: "0px", md: "10px" }}
+            my={{ xs: "20px", md: "0px" }}
+            sx={{ height: "fit-content" }}
+            p={0}
+          >
+            {review.slice(-1).map((review, index) => (
               <>
-           <Paper
-      elevation={3}
-      sx={{
-        p: 3,
-        my: 2,
-        borderLeft: "6px solid orangered",
-        backgroundColor: "#fffdf9",
-        width:{xs:'90%' ,md:'100%'},
-        mx: "auto",
-      }}
-    >
-      <Typography variant="h6" fontWeight={700} color="orangered" gutterBottom>
-        {review.fullName}
-      </Typography>
+                <Paper
+                  elevation={3}
+                  sx={{
+                    p: 3,
+                    my: 2,
+                    borderLeft: "6px solid orangered",
+                    backgroundColor: "#fffdf9",
+                    width: { xs: "90%", md: "100%" },
+                    mx: "auto",
+                  }}
+                >
+                  <Box width={"100%"} display={"flex"} justifyContent={"end"} marginBottom={'-40px'}>
+                    <Button onClick={() => deletedata(review._id)}>
+                      <DeleteForeverIcon />
+                    </Button>
+                  </Box>
+                  <Typography
+                    variant="h6"
+                    fontWeight={700}
+                    color="orangered"
+                    gutterBottom
+                  >
+                    {review.fullName}
+                  </Typography>
 
-      <Typography fontStyle="italic" color="gray" gutterBottom>
-        {new Date(review.date).toLocaleDateString()}
-      </Typography>
+                  <Typography fontStyle="italic" color="gray" gutterBottom>
+                    {review.date}
+                  </Typography>
 
-      <Typography
-        variant="body1"
-        sx={{ color: "#444", lineHeight: 1.6, mb: 2 }}
-      >
-        {review.experience}
-      </Typography>
+                  <Box mb={1}>
+                    <Typography
+                      sx={{
+                        wordBreak: "break-word", 
+                        whiteSpace: "pre-wrap", 
+                        overflowWrap: "break-word", 
+                        maxWidth: "100%",   
+                      }}
+                    >
+                      {review.experience}
+                    </Typography>
+                  </Box>
 
-      <Box display="flex" flexWrap="wrap" gap={2}>
-        <Box display="flex" alignItems="center" gap={1}>
-          <EmailIcon fontSize="small" color="action" />
-          <Typography fontSize="14px">{review.Email}</Typography>
-        </Box>
+                  <Box display="flex" flexWrap="wrap" flexDirection={{xs:'column',md:'row'}} gap={2}>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <EmailIcon fontSize="small" color="action" />
+                      <Typography fontSize="14px">{review.Email}</Typography>
+                    </Box>
 
-        <Box display="flex" alignItems="center" gap={1}>
-          <PhoneIcon fontSize="small" color="action" />
-          <Typography fontSize="14px">{review.ContectNumber}</Typography>
-        </Box>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <PhoneIcon fontSize="small" color="action" />
+                      <Typography fontSize="14px">
+                        {review.ContectNumber}
+                      </Typography>
+                    </Box>
 
-        <Box>
-          <Typography variant="caption" color="textSecondary">
-            Tour Duration: {review.Tourdays} days
-          </Typography>
-        </Box>
-      </Box>
-    </Paper>
+                    <Box >
+                      <Typography variant="caption" color="textSecondary">
+                        <Rating size="small" value={review.Tourdays} readOnly />
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Link to='/'>
+                   <Button
+                type="submit"
+                fullWidth
+                sx={{
+                  width: "50%",
+                  color: "green",
+                  border: "1px solid green",
+                  borderRadius: "0px",
+                  mt: 1,
+                  "&:hover": {
+                    color: "white",
+                    background: "green",
+                    border: "1px solid white",
+                  },
+                }}
+              >
+                View All
+              </Button></Link>
+                </Paper>
               </>
-            ))
-          }
-        </Box>
+            ))}
+          </Box>
         </Box>
       </Box>
     </>
