@@ -25,6 +25,7 @@ import Header from "./Header";
 import axios from "axios";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useNavigate } from "react-router-dom";
+import ScrollToTop from './Topscroll'
 
 const slides = [
   {
@@ -100,6 +101,7 @@ const Sliders = () => {
 
   return (
     <>
+    <ScrollToTop></ScrollToTop>
       <Box className="slider-container" style={{ position: "relative" }}>
         <Box sx={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 999 }}>
           <Header />
@@ -164,6 +166,7 @@ const Sliders = () => {
                       py: 1.2,
                       fontWeight: 600,
                       fontSize: "0.9rem",
+                      border: "1px solid transparent",
                       "&:hover": {
                         backgroundColor: "transparent",
                         color: "white",
@@ -182,7 +185,7 @@ const Sliders = () => {
 
       {/* Service Section */}
       <Box width="80%" margin="auto" marginTop="-100px" data-aos="fade-down">
-        <Box sx={{ py: 6, px: { xs: 2, md: 8 }, backgroundColor: "#f8f9fd" }}>
+        <Box sx={{ py: 6, px: { xs: 2, md: 8 }}}>
           <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 3 }}>
             {details.map((item, index) => (
               <Box
