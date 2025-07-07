@@ -6,9 +6,9 @@ import { Box, Typography, Button } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-import herobg1 from '../image/herobgimg.jpg';
-import herobg2 from '../image/slider2.jpg';
-import herobg3 from '../image/slider3.jpg';
+import herobg1 from '../../assets/image/herobgimg.jpg';
+import herobg2 from '../../assets/image/slider2.jpg';
+import herobg3 from '../../assets/image/slider3.jpg';
 
 const slides = [
   {

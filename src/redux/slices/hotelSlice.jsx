@@ -1,48 +1,48 @@
+// src/redux/slices/hotelSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const apiURL = 'https://generateapi.onrender.com/api/detailstour';
-const apiKey = 'Ofokc8bYPo2MB7Ll';
+const apiURL = 'https://generateapi.onrender.com/api/hotels';
+const apiKey = 'dvRW0eh1JNMQRsYC';
 
-export const fetchTours = createAsyncThunk('tours/fetchTours', () => {
+export const fetchHotels = createAsyncThunk('hotels/fetchHotels', () => {
   return axios
     .get(apiURL, {
       headers: { Authorization: apiKey },
     })
     .then((res) => res.data.Data)
     .catch((error) => {
-      // throw error to trigger rejected state in Redux
       throw new Error(error.response?.data?.message || error.message);
     });
 });
 
-const tourSlice = createSlice({
-  name: 'tours',
+const hotelSlice = createSlice({
+  name: 'hotels',
   initialState: {
-    tours: [],
+    hotels: [],
     status: 'idle',
     error: null,
   },
   reducers: {
-    clearTours: (state) => {
-      state.tours = [];
+    clearHotels: (state) => {
+      state.hotels = [];
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTours.pending, (state) => {
+      .addCase(fetchHotels.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(fetchTours.fulfilled, (state, action) => {
+      .addCase(fetchHotels.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.tours = action.payload;
+        state.hotels = action.payload;
       })
-      .addCase(fetchTours.rejected, (state, action) => {
+      .addCase(fetchHotels.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });
   },
 });
 
-export const { clearTours } = tourSlice.actions;
-export default tourSlice.reducer;
+export const { clearHotels } = hotelSlice.actions;
+export default hotelSlice.reducer;

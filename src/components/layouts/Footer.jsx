@@ -15,7 +15,7 @@ import {
   Twitter,
   LinkedIn,
 } from '@mui/icons-material';
-import logo from '../image/logo.png'
+import logo from '../../assets/image/logo.png'
 
 function Footer() {
   return (

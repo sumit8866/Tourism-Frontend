@@ -14,21 +14,16 @@ import {
 } from "@mui/material";
 import Rating from "@mui/material/Rating";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import Header from "./Header";
+import Header from "../components/layouts/Header";
 import Slider from "react-slick";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import Accommodation from "../image/five.png";
-import Transfer from "../image/airport.png";
-import Meals from "../image/healthy-meal.png";
-import Sightseeing from "../image/binocular.png";
 import { Field, Form, Formik } from "formik";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
-
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
-const TourPage = () => {
+const HotelPage = () => {
   var today = new Date();
   var dd = String(today.getDate()).padStart(2, "0");
   var mm = String(today.getMonth() + 1).padStart(2, "0");
@@ -48,19 +43,19 @@ const TourPage = () => {
     ContectNumber: "",
   });
   const { id } = useParams();
-  const [tour, setTour] = useState(null);
+  const [hotel, setHotel] = useState(null);
   const [review, setreview] = useState([]);
-  const tourkey = "Ofokc8bYPo2MB7Ll";
-  const keyrewview = "hwOMaWc5inHk1x9M";
+  const hotelkey = "dvRW0eh1JNMQRsYC";
+  const keyrewview = "hwOMaWc5inHk1x9M"; // Assuming same review key for now
 
   useEffect(() => {
     axios
-      .get("https://generateapi.onrender.com/api/detailstour", {
-        headers: { Authorization: tourkey },
+      .get("https://generateapi.onrender.com/api/hotels", {
+        headers: { Authorization: hotelkey },
       })
       .then((res) => {
-        const found = res.data.Data.find((t) => t._id === id);
-        setTour(found);
+        const found = res.data.Data.find((h) => h._id === id);
+        setHotel(found);
       })
       .catch((error) => {
         console.log(error);
@@ -84,8 +79,6 @@ const TourPage = () => {
   };
 
   const deletedata = (id) => {
-    console.log("hello");
-
     axios
       .delete(`https://generateapi.onrender.com/api/review/${id}`, {
         headers: {
@@ -93,7 +86,6 @@ const TourPage = () => {
         },
       })
       .then((res) => {
-        console.log("ok");
         showdata();
       })
       .catch((error) => {
@@ -109,7 +101,6 @@ const TourPage = () => {
         },
       })
       .then((res) => {
-        console.log(res.data.Data);
         setreview(res.data.Data);
       })
       .catch((error) => {
@@ -120,7 +111,7 @@ const TourPage = () => {
     showdata();
   }, []);
 
-  if (!tour)
+  if (!hotel)
     return <CircularProgress sx={{ mt: 10, mx: "auto", display: "block" }} />;
 
   const CustomNextArrow = (props) => {
@@ -192,8 +183,9 @@ const TourPage = () => {
         </Box>
 
         <Slider {...settings}>
-          {tour.image.map((slide) => (
+          {hotel.image.map((slide, index) => (
             <Box
+              key={index}
               sx={{
                 position: "relative",
                 height: { xs: "100dvh", md: "100vh" },
@@ -238,19 +230,7 @@ const TourPage = () => {
                       fontSize: { xs: "2.5rem", sm: "3rem", md: "4rem" },
                     }}
                   >
-                    {tour.location.toUpperCase()}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: { xs: "16px", md: "18px" },
-                      mb: 4,
-                      maxWidth: "700px",
-                      lineHeight: 1.6,
-                      fontWeight: 400,
-                      mx: "auto",
-                    }}
-                  >
-                    {slide.description}
+                    {hotel.name.toUpperCase()}
                   </Typography>
                 </Box>
               </Box>
@@ -261,43 +241,23 @@ const TourPage = () => {
 
       <Box sx={{ py: 6 }} margin={"auto"} width={"90%"}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>
-          {tour.title}
+          {hotel.fullname}
         </Typography>
-
-        <Typography sx={{ color: "orangered", fontWeight: 500, mb: 3 }}>
-          {tour.night} Nights - {tour.day} Days
-        </Typography>
-
         <Divider sx={{ my: 3 }} />
-
         <Typography variant="h6" fontWeight="bold" gutterBottom>
-          Inclusions
+          Description
         </Typography>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            maxWidth: 600,
-            mt: 3,
-          }}
-        >
-          {[
-            { icon: Accommodation, label: "Accommodation" },
-            { icon: Transfer, label: "Transfer" },
-            { icon: Meals, label: "Meals" },
-            { icon: Sightseeing, label: "Sightseeing" },
-          ].map((item, i) => (
-            <Box key={i} sx={{ textAlign: "center" }}>
-              <img
-                src={item.icon}
-                alt={item.label}
-                style={{ height: 50, marginBottom: 8 }}
-              />
-              <Typography color="gray">{item.label}</Typography>
-            </Box>
-          ))}
-        </Box>
+        <Typography>{hotel.description}</Typography>
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          Accommodation
+        </Typography>
+        <Typography>{hotel.accommodation}</Typography>
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          Hotel Policies
+        </Typography>
+        <Typography>{hotel.hotel_policies}</Typography>
       </Box>
 
       <Box
@@ -307,150 +267,7 @@ const TourPage = () => {
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Box width={{ xs: "100%", md: "70%" }} mx={{ xs: "0px", md: "10px" }}>
-          <Box
-            padding={1}
-            fontWeight={300}
-            color={"gray"}
-            backgroundColor="#fef9f4"
-            border={"1px solid orangered"}
-            mb={2}
-          >
-            {tour.description}
-          </Box>
-          <Box
-            padding={2}
-            mb={3}
-            fontWeight={300}
-            color={"gray"}
-            backgroundColor="#fef9f4"
-            border={"1px solid orangered"}
-          >
-            {[1, 2, 3, 4, 5].map((day) => {
-              const title = tour[`day${day}`];
-              const description = tour[`day${day}_description`];
-
-              if (title === " " && description === " ") return "";
-
-              return (
-                <Box key={day} sx={{ mt: 3 }}>
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                    color="orangered"
-                  >
-                    Day {day}
-                  </Typography>
-
-                  {title && (
-                    <Typography
-                      variant="subtitle2"
-                      fontWeight="bold"
-                      sx={{ mt: 0.5 }}
-                    >
-                      {title}
-                    </Typography>
-                  )}
-
-                  {/* Show tags and icons only for Day 1 */}
-                  {day === 1 && (
-                    <>
-                      {/* Icons */}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 3,
-                          mt: 1,
-                        }}
-                      >
-                        {[
-                          {
-                            name: "Breakfast",
-                            icon: Meals,
-                          },
-                          {
-                            name: "Transfers",
-                            icon: Transfer,
-                          },
-                          {
-                            name: "Stay Included",
-                            icon: Accommodation,
-                          },
-                        ].map((item, idx) => (
-                          <Box
-                            key={idx}
-                            sx={{ textAlign: "center", fontSize: "12px" }}
-                          >
-                            <Box
-                              sx={{
-                                width: 30,
-                                height: 30,
-                                display: "inline-flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                mb: 0.5,
-                              }}
-                            >
-                              <img src={item.icon} alt="" width={"100%"} />
-                            </Box>
-                            <Typography fontSize={"14px"}>
-                              {item.name}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
-                    </>
-                  )}
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: 1,
-                      flexWrap: "wrap",
-                      my: 1,
-                    }}
-                  >
-                    {[
-                      "Arrival Transfer",
-                      "Sightseeing tour",
-                      "Lunch",
-                      "Dinner",
-                    ].map((tag, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          fontSize: "12px",
-                          px: 1.2,
-                          py: 0.5,
-
-                          borderRadius: "20px",
-                          color: "#555",
-                          border: "1px solid #ddd",
-                        }}
-                      >
-                        {tag}
-                      </Box>
-                    ))}
-                  </Box>
-                  {/* Description */}
-                  {description && (
-                    <Typography
-                      sx={{
-                        mt: 1,
-                        color: "#555",
-                        fontSize: "15px",
-                        lineHeight: 1.7,
-                      }}
-                    >
-                      {description}
-                    </Typography>
-                  )}
-
-                  <Divider sx={{ mt: 2 }} />
-                </Box>
-              );
-            })}
-          </Box>
+          {/* Review Form */}
         </Box>
         <Box
           width={{ xs: "95%", md: "30%" }}
@@ -497,7 +314,7 @@ const TourPage = () => {
                 textAlign={"start"}
               >
                 {" "}
-                Tour Experience
+                Your Experience
               </Typography>
 
               <Field
@@ -515,20 +332,20 @@ const TourPage = () => {
                 color="orangered"
                 variant="div"
                 fontSize={"14px"}
-                px={"15px"} 
+                px={"15px"}
                 fontWeight={700}
                 border={"1px solid orangered"}
                 textAlign={"start"}
                 mb={1}
               >
                 {" "}
-                Rating 
+                Rating
               </Typography>
 
               <Field
                 as={TextField}
                 name="Tourdays"
-                label='Rate in 1 to 5'
+                label="Rate in 1 to 5"
                 type="number"
                 fullWidth
                 size="small"
@@ -566,7 +383,7 @@ const TourPage = () => {
                 textAlign={"start"}
               >
                 {" "}
-                Contect Number
+                Contact Number
               </Typography>
 
               <Field
@@ -606,7 +423,7 @@ const TourPage = () => {
             sx={{ height: "fit-content" }}
             p={0}
           >
-            {review.slice(-1).map((review, index) => (
+            {review.slice(-2).map((review, index) => (
               <>
                 <Paper
                   elevation={3}
@@ -615,11 +432,15 @@ const TourPage = () => {
                     my: 2,
                     borderLeft: "6px solid orangered",
                     backgroundColor: "#fffdf9",
-                    width: { xs: "90%", md: "100%" },
-                    mx: "auto",
+                    width: { xs: "110%", md: "110%" },
                   }}
                 >
-                  <Box width={"100%"} display={"flex"} justifyContent={"end"} marginBottom={'-40px'}>
+                  <Box
+                    width={"100%"}
+                    display={"flex"}
+                    justifyContent={"end"}
+                    marginBottom={"-40px"}
+                  >
                     <Button onClick={() => deletedata(review._id)}>
                       <DeleteForeverIcon />
                     </Button>
@@ -640,17 +461,22 @@ const TourPage = () => {
                   <Box mb={1}>
                     <Typography
                       sx={{
-                        wordBreak: "break-word", 
-                        whiteSpace: "pre-wrap", 
-                        overflowWrap: "break-word", 
-                        maxWidth: "100%",   
+                        wordBreak: "break-word",
+                        whiteSpace: "pre-wrap",
+                        overflowWrap: "break-word",
+                        maxWidth: "100%",
                       }}
                     >
                       {review.experience}
                     </Typography>
                   </Box>
 
-                  <Box display="flex" flexWrap="wrap" flexDirection={{xs:'column',md:'row'}} gap={2}>
+                  <Box
+                    display="flex"
+                    flexWrap="wrap"
+                    flexDirection={{ xs: "column", md: "row" }}
+                    gap={2}
+                  >
                     <Box display="flex" alignItems="center" gap={1}>
                       <EmailIcon fontSize="small" color="action" />
                       <Typography fontSize="14px">{review.Email}</Typography>
@@ -663,31 +489,36 @@ const TourPage = () => {
                       </Typography>
                     </Box>
 
-                    <Box >
+                    <Box>
                       <Typography variant="caption" color="textSecondary">
-                        <Rating size="small" value={review.Tourdays} readOnly />
+                        <Rating
+                          size="small"
+                          value={review.Tourdays}
+                          readOnly
+                        />
                       </Typography>
                     </Box>
                   </Box>
-                  <Link to='/'>
-                   <Button
-                type="submit"
-                fullWidth
-                sx={{
-                  width: "50%",
-                  color: "green",
-                  border: "1px solid green",
-                  borderRadius: "0px",
-                  mt: 1,
-                  "&:hover": {
-                    color: "white",
-                    background: "green",
-                    border: "1px solid white",
-                  },
-                }}
-              >
-                View All
-              </Button></Link>
+                  <Link to="/">
+                    <Button
+                      type="submit"
+                      fullWidth
+                      sx={{
+                        width: "50%",
+                        color: "green",
+                        border: "1px solid green",
+                        borderRadius: "0px",
+                        mt: 1,
+                        "&:hover": {
+                          color: "white",
+                          background: "green",
+                          border: "1px solid white",
+                        },
+                      }}
+                    >
+                      View All
+                    </Button>
+                  </Link>
                 </Paper>
               </>
             ))}
@@ -698,4 +529,4 @@ const TourPage = () => {
   );
 };
 
-export default TourPage;
+export default HotelPage;

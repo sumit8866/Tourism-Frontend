@@ -8,10 +8,10 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import Logo from "../image/logo.png";
+import Logo from "../../assets/image/logo.png";
 import { Link } from "react-router-dom"; 
 
-const navItems = ["Home", "About", "Tour", "Hotels", "Contact", "Add Listing"];
+const navItems = ["Home", "About", "Tour", "Hotels", "Contact", "Login"];
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);

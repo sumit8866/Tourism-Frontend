@@ -7,15 +7,15 @@ import {
   Rating,
   Link,
 } from "@mui/material";
-import Header from "./Header";
-import bg from "../image/slider2.jpg";
+import Header from "../layouts/Header";
+import bg from "../../assets/image/slider2.jpg";
 import { useNavigate } from "react-router-dom";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
 import { useSelector, useDispatch } from "react-redux";
-import { fetchTours } from "../redux/slices/tourSlice";
+import { fetchTours } from "../../redux/slices/tourSlice";
 
 const Tour = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,9 +59,13 @@ const Tour = () => {
     ? displayData.filter((tour) => tour.rating === selectedRating)
     : displayData;
 
+
+    
   const handleDiscoverClick = (tour) => {
     navigate(`/tour/${tour._id}`, { state: { tour } });
   };
+
+
 
   if (status === "loading") {
     return <Typography textAlign="center" mt={5}>Loading tours...</Typography>;
@@ -298,8 +302,9 @@ const Tour = () => {
                   <Typography
                     variant="body2"
                     color="blue"
-                    mb={1}
-                    textAlign="start"
+                    mb={2}
+                    mt={1}
+                    textAlign="center"
                   >
                     {item.day} <span style={{ color: "black" }}>Days</span> /{" "}
                     {item.night} <span style={{ color: "black" }}>Nights</span>
